@@ -19,7 +19,7 @@ import path from 'path';
 import {DbDataSource} from './datasources';
 import {MySequence} from './sequence';
 
-export class TodoListApplication extends BootMixin(
+export class StoreApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {
