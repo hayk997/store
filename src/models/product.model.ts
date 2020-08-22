@@ -29,9 +29,8 @@ export class Product extends Entity {
 
   @property({
     type: 'string',
-    required: true,
   })
-  userId: string;
+  userId?: string;
 
   @property({
     type: 'date',

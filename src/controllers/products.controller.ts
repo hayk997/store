@@ -18,6 +18,9 @@ import {
 } from '@loopback/rest';
 import {Product} from '../models';
 import {ProductRepository} from '../repositories';
+import {inject} from '@loopback/core';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {authenticate} from '@loopback/authentication';
 
 export class ProductsController {
   constructor(
@@ -33,6 +36,7 @@ export class ProductsController {
       },
     },
   })
+  @authenticate('jwt')
   async create(
     @requestBody({
       content: {
@@ -45,8 +49,10 @@ export class ProductsController {
       },
     })
     product: Omit<Product, 'id'>,
+    @inject(SecurityBindings.USER)
+      currentUserProfile: UserProfile,
   ): Promise<Product> {
-    return this.productRepository.create(product);
+    return this.productRepository.create({...product,userId:currentUserProfile[securityId]});
   }
 
   @get('/products/count', {
