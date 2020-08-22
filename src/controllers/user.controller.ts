@@ -4,14 +4,10 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {authenticate, TokenService} from '@loopback/authentication';
-import {
-  Credentials,
-  MyUserService,
-  TokenServiceBindings,
-  User,
-  UserRepository,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
+import {User,} from '../models';
+import {  UserRepository,} from '../repositories';
+import {  Credentials,  MyUserService} from '../services';
+import {  TokenServiceBindings,  UserServiceBindings} from '../keys';
 import {inject} from '@loopback/core';
 import {model, property, repository} from '@loopback/repository';
 import {get, getModelSchemaRef, post, requestBody} from '@loopback/rest';
