@@ -30,6 +30,7 @@ export class StoreApplication extends BootMixin(
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
+    this.static('/images', path.join(__dirname, '../images'))
 
     this.component(RestExplorerComponent);
 
