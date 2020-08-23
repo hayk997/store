@@ -5,13 +5,19 @@
 
 import {TokenService, UserService} from '@loopback/authentication';
 import {BindingKey} from '@loopback/core';
-import {User} from './models/user.model';
+import {User} from './models';
 import {Credentials} from './services';
+import {FileUploadHandler} from './types';
 
 export namespace TokenServiceConstants {
   export const TOKEN_SECRET_VALUE = 'myjwts3cr3t';
   export const TOKEN_EXPIRES_IN_VALUE = '21600';
 }
+
+export const FILE_UPLOAD_SERVICE = BindingKey.create<FileUploadHandler>(
+  'services.FileUpload',
+);
+export const STORAGE_DIRECTORY = BindingKey.create<string>('storage.directory');
 
 export namespace TokenServiceBindings {
   export const TOKEN_SECRET = BindingKey.create<string>(

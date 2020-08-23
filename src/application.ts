@@ -18,6 +18,8 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {DbDataSource} from './datasources';
 import {MySequence} from './sequence';
+import {FILE_UPLOAD_SERVICE, STORAGE_DIRECTORY} from './keys';
+import multer from 'multer';
 
 export class StoreApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -27,13 +29,13 @@ export class StoreApplication extends BootMixin(
 
     // Set up the custom sequence
     this.sequence(MySequence);
-
+    console.log(options)
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
     this.static('/images', path.join(__dirname, '../images'))
 
     this.component(RestExplorerComponent);
-
+    this.configureFileUpload(options.fileStorageDirectory);
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {
@@ -56,5 +58,25 @@ export class StoreApplication extends BootMixin(
 
     //new
     this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+
+  }
+  /**
+   * Configure `multer` options for file upload
+   */
+  protected configureFileUpload(destination?: string) {
+    // Upload files to `dist/.sandbox` by default
+    destination = destination ?? path.join(__dirname, '../files');
+    this.bind(STORAGE_DIRECTORY).to(destination);
+    const multerOptions: multer.Options = {
+      storage: multer.diskStorage({
+        destination,
+        // Use the original file name as is
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }),
+    };
+    // Configure the file upload service with multer options
+    this.configure(FILE_UPLOAD_SERVICE).to(multerOptions);
   }
 }
