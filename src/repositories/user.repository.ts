@@ -8,11 +8,11 @@ import {
   DefaultCrudRepository,
   HasOneRepositoryFactory,
   juggler,
-  repository,
-} from '@loopback/repository';
+  repository, HasManyRepositoryFactory} from '@loopback/repository';
 import {UserServiceBindings} from '../keys';
-import {User, UserCredentials, UserRelations} from '../models';
+import {User, UserCredentials, UserRelations, Product} from '../models';
 import {UserCredentialsRepository} from './user-credentials.repository';
+import {ProductRepository} from './product.repository';
 
 export class UserRepository extends DefaultCrudRepository<
   User,
@@ -24,15 +24,19 @@ export class UserRepository extends DefaultCrudRepository<
     typeof User.prototype.id
   >;
 
+  public readonly products: HasManyRepositoryFactory<Product, typeof User.prototype.id>;
+
   constructor(
     @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
     dataSource: juggler.DataSource,
     @repository.getter('UserCredentialsRepository')
     protected userCredentialsRepositoryGetter: Getter<
       UserCredentialsRepository
-    >,
+    >, @repository.getter('ProductRepository') protected productRepositoryGetter: Getter<ProductRepository>,
   ) {
     super(User, dataSource);
+    this.products = this.createHasManyRepositoryFactoryFor('products', productRepositoryGetter,);
+    this.registerInclusionResolver('products', this.products.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(
       'userCredentials',
       userCredentialsRepositoryGetter,
